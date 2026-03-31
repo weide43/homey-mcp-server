@@ -3,7 +3,7 @@
 .gitignore
 .env
 *.md
-README*
+README.md
 CHANGELOG*
 node_modules/.cache
 **/*.test.js
