@@ -5,12 +5,12 @@
   "sdk": 3,
   "platforms": ["local"],
   "name": {
-    "en": "Homey MCP Server",
-    "nl": "Homey MCP Server"
+    "en": "Claude MCP",
+    "nl": "Claude MCP"
   },
   "description": {
-    "en": "Control your entire smart home from Claude, Cursor, or any AI agent — 81 tools for devices, flows, zones, energy, and more",
-    "nl": "Bedien je volledige smarthome vanuit Claude, Cursor of elke AI-agent — 81 tools voor apparaten, flows, zones, energie en meer"
+    "en": "Control your entire smart home from Claude, Cursor, or any AI agent — 83 tools for devices, flows, zones, energy, and more",
+    "nl": "Bedien je volledige smarthome vanuit Claude, Cursor of elke AI-agent — 83 tools voor apparaten, flows, zones, energie en meer"
   },
   "tags": {
     "en": ["ai", "mcp", "claude", "automation", "api", "agent", "llm"],
