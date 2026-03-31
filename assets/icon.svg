@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <!-- Outer glow -->
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#d0a0ff" stop-opacity="0.6"/>
+      <stop offset="60%"  stop-color="#8830ff" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#5010aa" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Core bright centre -->
+    <radialGradient id="core" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#ffffff" stop-opacity="1"/>
+      <stop offset="40%"  stop-color="#eeddff" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#9940ff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur1" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2.5"/>
+    </filter>
+    <filter id="blur2" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+    <filter id="blur3" x="-200%" y="-200%" width="500%" height="500%">
+      <feGaussianBlur stdDeviation="12"/>
+    </filter>
+  </defs>
+
+  <!-- Outer halo -->
+  <circle cx="50" cy="50" r="48" fill="url(#glow)" filter="url(#blur3)"/>
+
+  <!-- 4-pointed star: horizontal/vertical long spikes -->
+  <polygon points="50,4 52.5,48 50,96 47.5,48"
+           fill="white" opacity="0.90" filter="url(#blur1)"/>
+  <polygon points="4,50 48,47.5 96,50 48,52.5"
+           fill="white" opacity="0.90" filter="url(#blur1)"/>
+
+  <!-- 4-pointed star: diagonal shorter spikes -->
+  <polygon points="50,14 51.8,48.2 50,86 48.2,51.8"
+           fill="white" opacity="0.55" filter="url(#blur1)"
+           transform="rotate(45 50 50)"/>
+  <polygon points="14,50 48.2,51.8 86,50 51.8,48.2"
+           fill="white" opacity="0.55" filter="url(#blur1)"
+           transform="rotate(45 50 50)"/>
+
+  <!-- Inner glow ring -->
+  <circle cx="50" cy="50" r="22" fill="url(#core)" filter="url(#blur2)"/>
+  <circle cx="50" cy="50" r="12" fill="url(#core)" filter="url(#blur1)"/>
+
+  <!-- Bright white centre -->
+  <circle cx="50" cy="50" r="4.5" fill="white" opacity="0.98"/>
+  <circle cx="50" cy="50" r="2"   fill="white" opacity="1"/>
+</svg>

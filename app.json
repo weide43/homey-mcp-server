@@ -1,0 +1,54 @@
+{
+  "id": "community.homey-mcp-server",
+  "version": "1.0.0",
+  "compatibility": ">=5.0.0",
+  "sdk": 3,
+  "platforms": ["local"],
+  "name": {
+    "en": "Homey MCP Server",
+    "nl": "Homey MCP Server"
+  },
+  "description": {
+    "en": "Control your entire smart home from Claude, Cursor, or any AI agent — 81 tools for devices, flows, zones, energy, and more",
+    "nl": "Bedien je volledige smarthome vanuit Claude, Cursor of elke AI-agent — 81 tools voor apparaten, flows, zones, energie en meer"
+  },
+  "tags": {
+    "en": ["ai", "mcp", "claude", "automation", "api", "agent", "llm"],
+    "nl": ["ai", "mcp", "claude", "automatisering", "api", "agent", "llm"]
+  },
+  "category": ["tools"],
+  "brandColor": "#5c35cc",
+  "permissions": [
+    "homey:manager:speech-output",
+    "homey:manager:ledring",
+    "homey:manager:api"
+  ],
+  "author": {
+    "name": "Danny van Soerland",
+    "email": "weide43@hotmail.com",
+    "website": "https://github.com/dannyvansoerland/homey-mcp-server"
+  },
+  "support": "https://github.com/dannyvansoerland/homey-mcp-server/issues",
+  "source": "https://github.com/dannyvansoerland/homey-mcp-server",
+  "homepage": "https://github.com/dannyvansoerland/homey-mcp-server",
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "api": {
+    "routes": [
+      { "method": "GET",  "path": "/settings" },
+      { "method": "POST", "path": "/settings" },
+      { "method": "GET",  "path": "/status"   },
+      { "method": "GET",  "path": "/savepat"  }
+    ]
+  },
+  "contributing": {
+    "donate": {
+      "paypal": {
+        "username": ""
+      }
+    }
+  }
+}

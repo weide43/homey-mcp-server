@@ -1,0 +1,22 @@
+# Files to exclude from the Homey app bundle
+.git
+.gitignore
+.env
+*.md
+README*
+CHANGELOG*
+node_modules/.cache
+**/*.test.js
+**/*.spec.js
+test/
+tests/
+coverage/
+.nyc_output/
+.vscode/
+.idea/
+.claude/
+*.map
+
+# Development-only files
+settings/homey.js
+scripts/

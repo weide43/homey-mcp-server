@@ -1,0 +1,14 @@
+node_modules/
+settings/homey.js
+.env
+*.log
+.DS_Store
+Thumbs.db
+coverage/
+.nyc_output/
+dist/
+build/
+
+
+# Added by Homey CLI
+/.homeybuild/

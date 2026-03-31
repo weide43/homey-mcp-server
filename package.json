@@ -1,0 +1,26 @@
+{
+  "name": "community.homey-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP Server for Homey - Connect AI agents to your smart home",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "keywords": [
+    "homey",
+    "mcp",
+    "ai",
+    "claude",
+    "automation"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "homey-api": "^3.18.0"
+  },
+  "devDependencies": {
+    "homey": "^4.1.0"
+  }
+}

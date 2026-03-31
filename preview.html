@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Icon Preview</title>
+<style>
+  body { background: #1a1a2e; display: flex; flex-direction: column; align-items: center; padding: 40px; gap: 40px; font-family: sans-serif; color: white; }
+  h2 { margin: 0; font-size: 14px; opacity: 0.6; text-transform: uppercase; letter-spacing: 2px; }
+  .card { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .icon-row { display: flex; gap: 24px; align-items: flex-end; }
+  .icon-box { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .icon-box span { font-size: 11px; opacity: 0.5; }
+  /* Homey rounds the icon with a squircle and applies brandColor bg */
+  .homey-icon {
+    background: #5c35cc;
+    border-radius: 22%;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  img.banner { border-radius: 8px; max-width: 100%; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h2>Icon — zoals Homey hem toont</h2>
+  <div class="icon-row">
+    <div class="icon-box">
+      <div class="homey-icon" style="width:48px;height:48px">
+        <img src="assets/icon.svg" width="48" height="48">
+      </div>
+      <span>48px</span>
+    </div>
+    <div class="icon-box">
+      <div class="homey-icon" style="width:75px;height:75px">
+        <img src="assets/icon.svg" width="75" height="75">
+      </div>
+      <span>75px</span>
+    </div>
+    <div class="icon-box">
+      <div class="homey-icon" style="width:120px;height:120px">
+        <img src="assets/icon.svg" width="120" height="120">
+      </div>
+      <span>120px</span>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>App images (App Store)</h2>
+  <div class="icon-box">
+    <img class="banner" src="assets/images/small.png" width="250" height="175">
+    <span>small — 250×175</span>
+  </div>
+  <div class="icon-box">
+    <img class="banner" src="assets/images/large.png" width="500" height="350">
+    <span>large — 500×350</span>
+  </div>
+</div>
+
+</body>
+</html>

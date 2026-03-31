@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "settings-preview",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "serve", "settings", "-p", "3333", "--no-clipboard"],
+      "port": 3333
+    }
+  ]
+}

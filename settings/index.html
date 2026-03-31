@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homey MCP Server</title>
+  <script src="/homey.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #333; padding: 16px; font-size: 16px; line-height: 1.5; max-width: 100%; overflow-x: hidden; }
+    .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; }
+    .card-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #aaa; margin-bottom: 14px; }
+    .status-bar { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 8px; background: #e8f5e9; color: #2e7d32; font-weight: 500; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: #4caf50; flex-shrink: 0; }
+    .url-row { display: flex; align-items: center; gap: 8px; margin-top: 12px; background: #f3f0ff; border-radius: 8px; padding: 10px 12px; }
+    .url-text { font-family: monospace; font-size: 13px; flex: 1; word-break: break-all; color: #333; }
+    .copy-small { padding: 5px 12px; background: #5c35cc; color: white; border: none; border-radius: 6px; font-size: 13px; cursor: pointer; white-space: nowrap; }
+    label { display: block; font-size: 14px; font-weight: 600; color: #555; margin-bottom: 5px; margin-top: 14px; }
+    label:first-of-type { margin-top: 0; }
+    input { width: 100%; padding: 10px 13px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 15px; background: #fafafa; }
+    input:focus { outline: none; border-color: #5c35cc; background: white; }
+    .hint { font-size: 12px; color: #999; margin-top: 4px; }
+    .btn-primary { width: 100%; margin-top: 14px; padding: 12px; background: #5c35cc; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
+    .btn-primary:hover { background: #4a28aa; }
+
+    /* Wizard */
+    .tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+    .tab { padding: 8px 14px; border-radius: 8px; font-size: 13px; cursor: pointer; color: #666; border: none; background: #f0f0f0; font-weight: 500; }
+    .tab.active { background: #5c35cc; color: white; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+    .transport-tabs { display: flex; gap: 7px; margin-bottom: 12px; flex-wrap: wrap; }
+    .ttab { padding: 6px 13px; border-radius: 16px; font-size: 12px; cursor: pointer; border: 2px solid #ddd; background: white; color: #555; font-weight: 500; }
+    .ttab.active { border-color: #5c35cc; background: #5c35cc; color: white; }
+    .badge { font-size: 11px; padding: 1px 6px; border-radius: 8px; font-weight: 600; margin-left: 3px; }
+    .bg { background: #e8f5e9; color: #2e7d32; }
+    .bb { background: #e3f2fd; color: #1565c0; }
+    .steps { list-style: none; counter-reset: s; }
+    .steps li { counter-increment: s; display: flex; gap: 10px; align-items: flex-start; margin-bottom: 9px; font-size: 14px; color: #444; }
+    .steps li::before { content: counter(s); min-width: 23px; height: 23px; border-radius: 50%; background: #5c35cc; color: white; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .code-block { position: relative; background: #1e1e2e; color: #cdd6f4; border-radius: 8px; padding: 12px 12px 12px 12px; font-family: monospace; font-size: 12px; line-height: 1.7; overflow-x: auto; margin-top: 10px; }
+    .code-block pre { margin: 0; white-space: pre-wrap; word-break: break-all; }
+    .copy-btn { position: absolute; top: 8px; right: 8px; font-size: 12px; padding: 4px 11px; background: #5c35cc; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    .ro { padding: 11px 12px 11px 38px; border-radius: 8px; border: 2px solid #e0e0e0; cursor: pointer; margin-bottom: 8px; position: relative; }
+    .ro.sel { border-color: #5c35cc; background: #f3f0ff; }
+    .ro input[type=radio] { position: absolute; opacity: 0; pointer-events: none; }
+    .ro::before { content: ''; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; border-radius: 50%; border: 2px solid #ccc; background: white; box-sizing: border-box; }
+    .ro.sel::before { border-color: #5c35cc; background: #5c35cc; box-shadow: inset 0 0 0 3px white; }
+    .ro-t { font-size: 13px; font-weight: 600; display: block; }
+    .ro-s { font-size: 12px; color: #999; margin-top: 2px; display: block; }
+    .merge-ta { width: 100%; height: 110px; padding: 10px 12px; border: 2px solid #ddd; border-radius: 8px; font-family: monospace; font-size: 12px; background: #fafafa; resize: vertical; line-height: 1.5; margin-top: 10px; }
+    .merge-ta:focus { outline: none; border-color: #5c35cc; }
+    .hint-line { font-size: 12px; color: #999; margin-top: 6px; }
+  </style>
+</head>
+<body>
+
+<!-- Status + URL -->
+<div class="card">
+  <div class="card-title">Status</div>
+  <div class="status-bar"><div class="dot"></div><span>MCP Server actief</span></div>
+  <div class="url-row">
+    <span class="url-text" id="urlText">http://&lt;homey-ip&gt;:52199/mcp</span>
+    <button class="copy-small" id="copyUrl">Kopieer</button>
+  </div>
+</div>
+
+<!-- IP instelling -->
+<div class="card" id="ipCard">
+  <div class="card-title">Instelling</div>
+  <label>IP-adres van je Homey Pro</label>
+  <input type="text" id="ipInput" placeholder="bijv. 192.168.2.178">
+  <div class="hint">Eenmalig invullen. Vind je IP: Homey app &rarr; Meer &rarr; Homey Pro &rarr; IP-adres</div>
+  <label>Poort <span style="font-weight:400;color:#aaa">(standaard 52199)</span></label>
+  <input type="number" id="portInput" value="52199" min="1024" max="65535">
+  <button class="btn-primary" id="applyBtn">Toepassen</button>
+</div>
+
+<!-- PAT (optioneel) -->
+<div class="card">
+  <div class="card-title">Personal Access Token <span style="font-weight:400;font-size:11px;color:#aaa;text-transform:none">(optioneel)</span></div>
+  <div style="font-size:13px;color:#666;margin-bottom:12px;line-height:1.5">
+    De meeste tools werken zonder token: apparaten, zones, variabelen, notificaties, alarmen, inzichten en meer.<br><br>
+    Voor het <strong>aanmaken, wijzigen of verwijderen van flows</strong> (basis, geavanceerd en mappen) is een Personal Access Token nodig met de <code>homey.flow</code> scope.
+  </div>
+  <div id="patSavedBadge" style="display:none;margin-bottom:10px;padding:8px 12px;background:#e8f5e9;border-radius:8px;font-size:13px;color:#2e7d32;font-weight:500">✓ Token is opgeslagen — voer een nieuw token in om te vervangen</div>
+  <label>Personal Access Token</label>
+  <input type="password" id="patInput" placeholder="Plak hier je token">
+  <div class="hint" style="margin-top:6px">
+    Maak aan op <strong>my.homey.app → Instellingen → API → Token aanmaken</strong><br>
+    Selecteer scope: <code>homey.flow</code>
+  </div>
+  <button class="btn-primary" id="patBtn" style="margin-top:12px">Token opslaan</button>
+  <div id="patStatus" style="display:none;margin-top:8px;font-size:13px;color:#2e7d32">✓ Token opgeslagen</div>
+</div>
+
+<!-- Wizard -->
+<div class="card">
+  <div class="card-title">Verbinden met AI Agent</div>
+  <div class="tabs">
+    <button class="tab active" data-c="claude">Claude Desktop</button>
+    <button class="tab" data-c="code">Claude Code</button>
+    <button class="tab" data-c="cursor">Cursor / Windsurf</button>
+  </div>
+
+  <!-- Claude Desktop -->
+  <div class="tab-pane active" id="p-claude">
+    <div style="margin-bottom:14px">
+      <div class="ro sel" id="ro-new" onclick="setMode('new')">
+        <input type="radio" name="cm" value="new" checked>
+        <span class="ro-t">Nieuwe configuratie</span>
+        <div class="ro-s">Ik heb nog geen MCP configuratie</div>
+      </div>
+      <div class="ro" id="ro-merge" onclick="setMode('merge')">
+        <input type="radio" name="cm" value="merge">
+        <span class="ro-t">Bestaande configuratie samenvoegen</span>
+        <div class="ro-s">Plak je bestand — krijg de samengevoegde versie</div>
+      </div>
+    </div>
+    <div class="transport-tabs">
+      <button class="ttab active" data-t="http">Native HTTP <span class="badge bg">Aanbevolen</span></button>
+      <button class="ttab" data-t="npx">mcp-remote <span class="badge bb">Compatibel</span></button>
+    </div>
+    <textarea class="merge-ta" id="mergeJson" placeholder='{"mcpServers": {"other": {...}}}' style="display:none"></textarea>
+    <div class="code-block" id="cb-claude"><button class="copy-btn" onclick="cp('cb-claude')">Kopieer</button><pre id="pre-claude"></pre></div>
+    <div class="hint-line" id="hint-claude"></div>
+    <ol class="steps" style="margin-top:12px" id="steps-claude">
+      <li>Klik op <strong>Kopieer</strong> hieronder</li>
+      <li>Open Claude Desktop &rarr; <strong>Settings &rarr; Developer &rarr; Edit Config</strong></li>
+      <li>Vervang de inhoud van <code>claude_desktop_config.json</code></li>
+      <li>Sla op en herstart Claude Desktop</li>
+    </ol>
+  </div>
+
+  <!-- Claude Code -->
+  <div class="tab-pane" id="p-code">
+    <div class="transport-tabs">
+      <button class="ttab active" data-t="http">Native HTTP <span class="badge bg">Aanbevolen</span></button>
+      <button class="ttab" data-t="npx">mcp-remote <span class="badge bb">Compatibel</span></button>
+    </div>
+    <div class="code-block" style="margin-top:10px" id="cb-code"><button class="copy-btn" onclick="cp('cb-code')">Kopieer</button><pre id="pre-code"></pre></div>
+    <ol class="steps" style="margin-top:12px">
+      <li>Kopieer de opdracht hieronder</li>
+      <li>Voer uit in je terminal</li>
+      <li>Herstart Claude Code</li>
+    </ol>
+  </div>
+
+  <!-- Cursor -->
+  <div class="tab-pane" id="p-cursor">
+    <div class="transport-tabs">
+      <button class="ttab active" data-t="http">Native HTTP <span class="badge bg">Aanbevolen</span></button>
+      <button class="ttab" data-t="npx">mcp-remote <span class="badge bb">Compatibel</span></button>
+    </div>
+    <div class="code-block" style="margin-top:10px" id="cb-cursor"><button class="copy-btn" onclick="cp('cb-cursor')">Kopieer</button><pre id="pre-cursor"></pre></div>
+    <ol class="steps" style="margin-top:12px">
+      <li>Open MCP settings in Cursor / Windsurf</li>
+      <li>Voeg de configuratie toe aan <code>mcp.json</code></li>
+      <li>Herstart de editor</li>
+    </ol>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+var LS = {
+  g: function(k) { try { return localStorage.getItem('hms_' + k) || ''; } catch(e) { return ''; } },
+  s: function(k, v) { try { localStorage.setItem('hms_' + k, v); } catch(e) {} }
+};
+
+var _ip   = '';
+var _port = 52199;
+var _mode = 'new';       // 'new' | 'merge'
+var _tc   = { claude: 'http', code: 'http', cursor: 'http' };
+
+function mcpUrl() {
+  return _ip ? 'http://' + _ip + ':' + _port + '/mcp' : '';
+}
+
+function update() {
+  var url = mcpUrl();
+  document.getElementById('urlText').textContent = url || 'http://<homey-ip>:' + _port + '/mcp';
+
+  var tc = _tc.claude;
+  var entry_http = '{\n      "type": "http",\n      "url": "' + url + '"\n    }';
+  var entry_npx  = '{\n      "command": "npx",\n      "args": ["-y", "mcp-remote", "' + url + '", "--allow-http"]\n    }';
+
+  // Claude
+  if (_mode === 'new') {
+    var e = tc === 'http' ? entry_http : entry_npx;
+    document.getElementById('pre-claude').textContent =
+      '{\n  "mcpServers": {\n    "homey": ' + e + '\n  }\n}';
+  } else {
+    var raw = document.getElementById('mergeJson').value.trim();
+    if (!raw) {
+      document.getElementById('pre-claude').textContent = '// Plak je bestaande claude_desktop_config.json hierboven';
+    } else {
+      try {
+        var p = JSON.parse(raw);
+        if (!p.mcpServers) p.mcpServers = {};
+        p.mcpServers.homey = tc === 'http' ? { type: 'http', url: url } : { command: 'npx', args: ['-y', 'mcp-remote', url, '--allow-http'] };
+        document.getElementById('pre-claude').textContent = JSON.stringify(p, null, 2);
+      } catch(e) {
+        document.getElementById('pre-claude').textContent = '// Ongeldige JSON: ' + e.message;
+      }
+    }
+  }
+  document.getElementById('hint-claude').textContent = tc === 'npx' ? 'Vereist: Node.js op je computer (nodejs.org)' : '';
+
+  // Code
+  document.getElementById('pre-code').textContent = _tc.code === 'http'
+    ? 'claude mcp add homey --transport http "' + url + '"'
+    : 'claude mcp add homey --command "npx" -- -y mcp-remote "' + url + '" --allow-http';
+
+  // Cursor
+  var ce = _tc.cursor === 'http' ? entry_http : entry_npx;
+  document.getElementById('pre-cursor').textContent =
+    '{\n  "mcpServers": {\n    "homey": ' + ce + '\n  }\n}';
+}
+
+function cp(id) {
+  var text = document.getElementById('pre-' + id.replace('cb-', '')).textContent;
+  navigator.clipboard.writeText(text).catch(function() {
+    var ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+  });
+  var btn = document.querySelector('#' + id + ' .copy-btn');
+  var orig = btn.textContent; btn.textContent = 'Gekopieerd!';
+  setTimeout(function() { btn.textContent = orig; }, 1800);
+}
+
+function onHomeyReady(Homey) {
+  Homey.ready();
+
+  // Restore from localStorage
+  _ip   = LS.g('ip')   || '';
+  _port = parseInt(LS.g('port') || '52199', 10);
+  document.getElementById('ipInput').value   = _ip;
+  document.getElementById('portInput').value = _port;
+
+  // Auto-detect IP from window.location hostname
+  // Homey local domain: "192-168-2-178.homey.homeylocal.com" → "192.168.2.178"
+  if (!_ip) {
+    var h = window.location.hostname;
+    if (h && h.includes('.homey.homeylocal.com')) {
+      _ip = h.split('.homey.homeylocal.com')[0].replace(/-/g, '.');
+    } else if (h && h !== 'my.homey.app' && h !== 'localhost' && /^\d/.test(h)) {
+      _ip = h; // plain IP address
+    }
+    if (_ip) { document.getElementById('ipInput').value = _ip; LS.s('ip', _ip); }
+  }
+  update();
+
+  // Auto-detect IP: try Homey.get first (works in mobile app), then API fetch
+  function trySetIp(ip) {
+    if (!ip || _ip) return;
+    // Strip port if included (e.g. "192.168.2.178:80")
+    _ip = ip.split(':')[0];
+    document.getElementById('ipInput').value = _ip;
+    LS.s('ip', _ip);
+    update();
+  }
+
+  // 1. Try Homey bridge (mobile app)
+  if (typeof Homey.get === 'function') {
+    Homey.get('mcp_url', function(e, v) {
+      if (v) { try { trySetIp(new URL(v).hostname); } catch(_) {} }
+    });
+    Homey.get('local_address', function(e, v) { trySetIp(v); });
+    Homey.get('port', function(e, v) {
+      if (v) { _port = parseInt(v, 10); document.getElementById('portInput').value = _port; LS.s('port', _port); update(); }
+    });
+  }
+
+  // 2. Try settings API (web interface)
+  fetch('/api/app/community.homey-mcp-server/settings', { credentials: 'include' })
+    .then(function(r) { return r.ok ? r.json() : null; })
+    .then(function(s) {
+      if (!s) return;
+      trySetIp(s.local_ip || s.local_address);
+      if (s.mcp_url) { try { trySetIp(new URL(s.mcp_url).hostname); } catch(_) {} }
+      if (s.port && !_ip) {
+        _port = parseInt(s.port, 10);
+        document.getElementById('portInput').value = _port;
+        LS.s('port', _port);
+        update();
+      }
+    })
+    .catch(function() {});
+
+  // PAT opslaan
+  var _hasPat = false;
+  function showPatSaved() {
+    _hasPat = true;
+    document.getElementById('patSavedBadge').style.display = 'block';
+    document.getElementById('patInput').value = '';
+    document.getElementById('patInput').placeholder = 'Nieuw token (laat leeg om huidig te bewaren)';
+  }
+
+  if (typeof Homey.get === 'function') {
+    Homey.get('personal_access_token', function(e, v) { if (v) showPatSaved(); });
+  }
+  fetch('/api/app/community.homey-mcp-server/settings', { credentials: 'include' })
+    .then(function(r) { return r.ok ? r.json() : null; })
+    .then(function(s) { if (s && s.has_pat) showPatSaved(); })
+    .catch(function() {});
+
+  document.getElementById('patBtn').addEventListener('click', function() {
+    var pat = document.getElementById('patInput').value.trim();
+    var btn = document.getElementById('patBtn');
+    var st  = document.getElementById('patStatus');
+
+    // If no new token entered and one is already saved, nothing to do
+    if (!pat && _hasPat) {
+      st.textContent = 'Geen wijziging — huidig token blijft actief';
+      st.style.color = '#999';
+      st.style.display = 'block';
+      setTimeout(function() { st.style.display = 'none'; }, 3000);
+      return;
+    }
+    if (!pat) {
+      st.textContent = 'Voer een token in';
+      st.style.color = '#c62828';
+      st.style.display = 'block';
+      setTimeout(function() { st.style.display = 'none'; }, 3000);
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Opslaan...';
+    st.style.display = 'none';
+
+    var done = false;
+    function onPatDone() {
+      if (done) return;
+      done = true;
+      btn.disabled = false;
+      btn.textContent = 'Token opslaan';
+      st.textContent = '✓ Token opgeslagen — herstart de app om flow-schrijfoperaties te activeren';
+      st.style.color = '#2e7d32';
+      st.style.display = 'block';
+      setTimeout(function() { st.style.display = 'none'; }, 6000);
+      showPatSaved();
+    }
+
+    try {
+      var r = Homey.set('personal_access_token', pat, function() { onPatDone(); });
+      if (r && typeof r.then === 'function') {
+        r.then(function() { onPatDone(); }).catch(function() { onPatDone(); });
+      }
+    } catch(e) {}
+    setTimeout(onPatDone, 1500);
+  });
+
+  // Apply button
+  document.getElementById('applyBtn').addEventListener('click', function() {
+    var ip   = document.getElementById('ipInput').value.trim();
+    var port = parseInt(document.getElementById('portInput').value || '52199', 10);
+    if (!ip) { alert('Vul het IP-adres van je Homey in.'); return; }
+    _ip = ip; _port = port;
+    LS.s('ip', ip); LS.s('port', port);
+    update();
+    // Also save port to Homey settings
+    fetch('/api/app/community.homey-mcp-server/settings', {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ port: port, local_address: ip })
+    }).catch(function() {});
+  });
+
+  // Copy URL
+  document.getElementById('copyUrl').addEventListener('click', function() {
+    var url = mcpUrl();
+    if (!url) { alert('Vul eerst het IP-adres in.'); return; }
+    navigator.clipboard.writeText(url).catch(function() {
+      var ta = document.createElement('textarea');
+      ta.value = url; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+    });
+    document.getElementById('copyUrl').textContent = 'Gekopieerd!';
+    setTimeout(function() { document.getElementById('copyUrl').textContent = 'Kopieer'; }, 1800);
+  });
+
+  // Client tabs
+  document.querySelectorAll('.tabs .tab').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.tabs .tab').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      document.querySelectorAll('.tab-pane').forEach(function(p) { p.classList.remove('active'); });
+      document.getElementById('p-' + btn.dataset.c).classList.add('active');
+    });
+  });
+
+  // Transport tabs
+  document.querySelectorAll('.transport-tabs .ttab').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var pane = btn.closest('.tab-pane');
+      pane.querySelectorAll('.ttab').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      _tc[pane.id.replace('p-', '')] = btn.dataset.t;
+      update();
+    });
+  });
+
+  // Claude mode handled by setMode() via onclick
+
+  document.getElementById('mergeJson').addEventListener('input', update);
+
+  window.setMode = function(m) {
+    _mode = m;
+    document.querySelector('input[name="cm"][value="' + m + '"]').checked = true;
+    document.getElementById('ro-new').classList.toggle('sel',   m === 'new');
+    document.getElementById('ro-merge').classList.toggle('sel', m === 'merge');
+    document.getElementById('mergeJson').style.display = m === 'merge' ? 'block' : 'none';
+    update();
+  };
+}
+</script>
+</body>
+</html>
