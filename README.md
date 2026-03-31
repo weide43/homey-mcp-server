@@ -43,7 +43,7 @@ Claude / GPT / Cursor
 
 **Via Homey CLI** *(voor ontwikkelaars)*
 ```bash
-git clone https://github.com/dannyvansoerland/homey-mcp-server
+git clone https://github.com/weide43/homey-mcp-server
 cd homey-mcp-server
 npm install
 # Maak een lokale preview stub aan voor de settings pagina:
@@ -365,7 +365,7 @@ Pull requests zijn welkom!
 
 **Development setup:**
 ```bash
-git clone https://github.com/dannyvansoerland/homey-mcp-server
+git clone https://github.com/weide43/homey-mcp-server
 cd homey-mcp-server
 npm install
 # Maak een lokale settings preview stub aan (niet inchecken):
