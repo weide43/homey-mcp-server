@@ -23,7 +23,7 @@ Claude / GPT / Cursor
 
 | Vereiste | Versie |
 |----------|--------|
-| Homey Pro | 2016 / 2019 / 2023 |
+| Homey Pro | 2016 / 2019 / 2023 / 2026 |
 | Homey firmware | ≥ 5.0.0 |
 | Athom account | my.homey.app |
 

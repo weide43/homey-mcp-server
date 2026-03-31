@@ -76,7 +76,7 @@ De meeste tools werken zonder token. Alleen voor het aanmaken, wijzigen of verwi
 
 VEREISTEN
 
-- Homey Pro (2016, 2019 of 2023)
+- Homey Pro (2016, 2019, 2023 of 2026)
 - Homey firmware 5.0.0 of hoger
 - Homey Cloud wordt NIET ondersteund
 
