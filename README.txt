@@ -1,45 +1,45 @@
-Claude MCP verbindt elke AI-agent (Claude, Cursor, Windsurf, GPT-4...) met je Homey Pro via het Model Context Protocol (MCP). Geef opdrachten in gewone taal en laat de AI je slimme huis bedienen — zonder programmeren.
+Claude MCP connects any AI agent (Claude, Cursor, Windsurf, GPT-4...) to your Homey Pro via the Model Context Protocol (MCP). Give commands in plain language and let AI control your smart home — no programming required.
 
 ---
 
-WAT KAN JE DOEN?
+WHAT CAN YOU DO?
 
-Stuur gewone opdrachten naar je AI-assistent:
-- "Zet alle lampen in de woonkamer uit"
-- "Maak een flow die elke dag om 7:30 het licht aanzet"
-- "Hoeveel energie heb ik deze week verbruikt?"
-- "Zet de variabele Vakantie op aan"
-- "Wat zijn de temperaturen in alle kamers?"
-
----
-
-83 TOOLS BESCHIKBAAR
-
-Apparaten (10): lijst, details, capabilities lezen/instellen, hernoemen, verplaatsen, hele zone tegelijk bedienen
-Zones (5): aanmaken, aanpassen, verwijderen
-Flows (9): aanmaken, aanpassen, triggeren, in-/uitschakelen, verwijderen
-Advanced Flows (6): aanmaken, aanpassen, triggeren, in-/uitschakelen, verwijderen
-Flow mappen (4): aanmaken, hernoemen, verwijderen
-Flow cards (5): beschikbare triggers/condities/acties opvragen en uitvoeren
-Logica-variabelen (5): aanmaken, lezen, instellen, verwijderen
-Inzichten (2): historische data en logs opvragen
-Notificaties (3): versturen, lijst opvragen, verwijderen
-Apps (9): lijst, details, in-/uitschakelen, herstarten, updaten, instellingen lezen/schrijven
-Gebruikers & aanwezigheid (6): wie is thuis, thuis/weg instellen, slaapstatus
-Wekkers (5): aanmaken, aanpassen, verwijderen
-Energie (3): live verbruik, kosten per kWh
-Audio (2): systeemvolume lezen/instellen
-Systeem (6): info, geheugen, opslag, hernoemen, herstarten
-Spraak & LED (2): tekst-naar-spraak, LED-ring animeren
+Send plain commands to your AI assistant:
+- "Turn off all lights in the living room"
+- "Create a flow that turns on the kitchen light every day at 7:30"
+- "How much energy did I use this week?"
+- "Set the variable Vacation to true"
+- "What are the temperatures in all rooms?"
 
 ---
 
-VERBINDEN MET JE AI-AGENT
+83 TOOLS AVAILABLE
 
-Na installatie vind je de MCP URL op de instellingenpagina van de app:
-http://[jouw-homey-ip]:52199/mcp
+Devices (10): list, details, read/set capabilities, rename, move, control entire zones at once
+Zones (5): create, update, delete
+Flows (9): create, update, trigger, enable/disable, delete
+Advanced Flows (6): create, update, trigger, enable/disable, delete
+Flow Folders (4): create, rename, delete
+Flow Cards (5): list available triggers/conditions/actions and run them directly
+Logic Variables (5): create, read, set, delete
+Insights (2): query historical data and logs
+Notifications (3): send, list, delete
+Apps (9): list, details, enable/disable, restart, update, read/write settings
+Users & Presence (6): who is home, set home/away, sleep state
+Alarms (5): create, update, delete
+Energy (3): live usage, cost per kWh
+Audio (2): read/set system volume
+System (6): info, memory, storage, rename, reboot
+Speech & LED (2): text-to-speech, LED ring animation
 
-Claude Desktop — voeg toe aan claude_desktop_config.json:
+---
+
+HOW TO CONNECT YOUR AI AGENT
+
+After installation, find your MCP URL on the app settings page:
+http://[your-homey-ip]:52199/mcp
+
+Claude Desktop — add to claude_desktop_config.json:
 {
   "mcpServers": {
     "homey": {
@@ -52,7 +52,7 @@ Claude Desktop — voeg toe aan claude_desktop_config.json:
 Claude Code (terminal):
 claude mcp add homey --transport http "http://[homey-ip]:52199/mcp"
 
-Cursor / Windsurf — voeg toe aan mcp.json:
+Cursor / Windsurf — add to mcp.json:
 {
   "mcpServers": {
     "homey": {
@@ -63,28 +63,38 @@ Cursor / Windsurf — voeg toe aan mcp.json:
 
 ---
 
-PERSONAL ACCESS TOKEN (optioneel)
+PERSONAL ACCESS TOKEN (optional)
 
-De meeste tools werken zonder token. Alleen voor het aanmaken, wijzigen of verwijderen van flows (basis, geavanceerd en mappen) is een Personal Access Token nodig:
+Most tools work without a token. Only creating, editing or deleting flows (basic, advanced and folders) requires a Personal Access Token:
 
-1. Ga naar my.homey.app > Instellingen > API
-2. Maak een token aan met de homey.flow scope
-3. Plak het token in de app-instellingen
-4. Herstart de app
-
----
-
-VEREISTEN
-
-- Homey Pro (2016, 2019, 2023 of 2026)
-- Homey firmware 5.0.0 of hoger
-- Homey Cloud wordt NIET ondersteund
+1. Go to my.homey.app > Settings > API
+2. Create a token with the homey.flow scope
+3. Paste the token in the app settings
+4. Restart the app
 
 ---
 
-TECHNISCH
+REQUIREMENTS
+
+- Homey Pro (2016, 2019, 2023 or 2026)
+- Homey firmware 5.0.0 or higher
+- Homey Cloud is NOT supported
+
+---
+
+WHY CLAUDE MCP?
+
+Claude MCP implements the open Model Context Protocol (MCP) standard, which is different from existing Homey AI apps:
+
+- Works with any MCP-compatible AI client: Claude Desktop, Claude Code, Cursor, Windsurf, Copilot Studio, and more
+- 83 granular tools giving full programmatic access to the Homey API — including advanced flow creation and editing, app settings management, insights data, energy monitoring, and system controls
+- Runs entirely on your local network — no cloud dependency, no subscription
+- Open-source: https://github.com/weide43/homey-mcp-server
+
+---
+
+TECHNICAL
 
 Protocol: MCP 2025-03-26 (StreamableHTTP + JSON-RPC 2.0)
-Standaard poort: 52199 (aanpasbaar in instellingen)
-Authenticatie: geen — vertrouwt op lokaal netwerk
-Broncode: https://github.com/weide43/homey-mcp-server
+Default port: 52199 (configurable in settings)
+Authentication: none — trusts local network

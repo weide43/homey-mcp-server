@@ -1,6 +1,6 @@
 {
-  "id": "community.homey-mcp-server",
-  "version": "1.0.2",
+  "id": "community.claude-mcp",
+  "version": "1.1.0",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "platforms": [

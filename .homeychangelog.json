@@ -1,0 +1,11 @@
+{
+  "1.0.0": {
+    "en": "Initial release — 83 tools to control Homey Pro from any AI agent via the Model Context Protocol. Devices, flows, advanced flows, zones, logic variables, alarms, energy, insights, notifications, apps, users and system management."
+  },
+  "1.0.1": {
+    "en": "Fix README title to Claude MCP, improved compatibility"
+  },
+  "1.0.2": {
+    "en": "Added Homey Pro 2026 to supported models list"
+  }
+}
